@@ -8,22 +8,26 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      number: 0
+      orders: []
     }
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', () => {
-      fetch('http://localhost:8080/IdeaTrading/rest/pub/2')
+    setInterval(() => {
+      fetch('http://localhost:8080/IdeaTrading/rest/orders')
         .then(res => res.json())
         .then(
           (result) => {
+            let orders = [];
+            for (let key of Object.keys(result)) {
+              orders.push(result[key]);
+            }
             this.setState({
-              number: result.number
+              orders: orders
             })
           }
         )
-    });
+    }, 1000);
   }
 
   render() {
@@ -31,17 +35,12 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            {this.state.number}
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React today
-      </a>
+          {this.state.orders.map((value) => {
+            return <div>
+              <span>{value.type}</span>
+              <span>{value.price}</span>
+            </div>
+          })}
         </header>
       </div>)
   }
