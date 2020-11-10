@@ -1,4 +1,4 @@
 /webapp/node_modules/*
 /target/*
-/.classpath
-/.project
+.classpath
+.project
