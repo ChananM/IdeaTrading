@@ -4,12 +4,15 @@ class OrderButton extends React.Component {
 
     constructor(props) {
         super(props);
-        state = {
+        this.state = {
+            type: props.type
         };
     }
 
     render() {
-        return (<div></div>);
+        return (
+            <button>{this.state.type}</button>
+        );
     }
 }
 export default OrderButton;

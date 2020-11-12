@@ -24,27 +24,9 @@ public class OrderManager {
 	
 	// Class Implementation
 	
-	private ArrayList<Order> orderList;
-
-	public OrderManager() {
-		this.orderList = new ArrayList<Order>();
-	}
-
-	public ArrayList<Order> getOrderList() {
-		return orderList;
-	}
-
-	public void setOrderList(ArrayList<Order> orderList) {
-		this.orderList = orderList;
-	}
-	
-	public void addOrder(Order o) {
-		this.orderList.add(o);
-	}
-	
-	public JSONObject getOrdersJson() {
+	public JSONObject getOrdersJson(ArrayList<Order> orderList) {
 		JSONObject obj = new JSONObject();
-		for(Order o : getOrderList()) {
+		for(Order o : orderList) {
 			JSONObject orderObject = new JSONObject();
 			orderObject.put("type", o.getType());
 			orderObject.put("price", o.getPrice());

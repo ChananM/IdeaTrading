@@ -1,5 +1,7 @@
 package com.chanan.ideaTrading;
 
+import java.util.ArrayList;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,30 +13,52 @@ import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
 
-@Path("/orders")
+@Path("/")
 public class IdeaTradingPublicRest {
 		
+	@POST
+	@Path("/game")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response initGame(String gameConfig) {
+		JSONObject gameConfiguration = new JSONObject(gameConfig);
+		GameManager.getInstance().initGame(gameConfiguration);
+		return Response.status(200).entity("Game initiated successfuly!").build();
+	}
+	
 	@GET
+	@Path("/orders")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrders() {
-		JSONObject jsonObject = OrderManager.getInstance().getOrdersJson();
+	public Response getOrdersMap() {
+		JSONObject jsonObject = GameManager.getInstance().getOrderMapJson();
 		return Response.status(200).entity(jsonObject.toMap()).build();
 	}
 	
 	@GET
-	@Path("/{orderId}")
+	@Path("/orders/{playerName}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrder(@PathParam("orderId") String orderId) {
-		JSONObject object = OrderManager.getInstance().getOrdersJson();
-		return Response.status(200).entity(object.getJSONObject(orderId).toMap()).build();
+	public Response getPlayerOrders(@PathParam("playerName") String playerName) {
+		ArrayList<Order> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
+		return Response.status(200).entity(playerOrdersJson.toMap()).build();
+	}
+	
+	@GET
+	@Path("/orders/{playerName}/{orderId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPlayerOrder(@PathParam("playerName") String playerName, @PathParam("orderId") String orderId) {
+		ArrayList<Order> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
+		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderId).toMap()).build();
 	}
 	
 	@POST
+	@Path("/orders/{playerName}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response putOrder(String orderDetails) {
+	public Response putOrder(@PathParam("playerName") String playerName, String orderDetails) {
 		Order newOrder = new Order(new JSONObject(orderDetails));
-		OrderManager.getInstance().addOrder(newOrder);
+		GameManager.getInstance().addOrder(playerName, newOrder);
 		return Response.status(200).entity("Order Placed Successfuly!").build();
 	}
 }
