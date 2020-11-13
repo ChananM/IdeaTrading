@@ -16,8 +16,7 @@ class Idea extends React.Component {
                     </tr>
                     <tr>
                         <td>
-                            <OrderButton type="BUY" />
-                            <OrderButton type="SELL" />
+                            <OrderButton idea={this.props.name} />
                         </td>
                     </tr>
                 </tbody>

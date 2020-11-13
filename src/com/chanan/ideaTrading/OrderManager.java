@@ -1,8 +1,11 @@
 package com.chanan.ideaTrading;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.json.JSONObject;
+
+import com.chanan.ideaTrading.Order.OrderType;
 
 public class OrderManager {
 	
@@ -24,13 +27,17 @@ public class OrderManager {
 	
 	// Class Implementation
 	
-	public JSONObject getOrdersJson(ArrayList<Order> orderList) {
+	public JSONObject getOrdersJson(Map<OrderType, ArrayList<Order>> orderList) {
 		JSONObject obj = new JSONObject();
-		for(Order o : orderList) {
-			JSONObject orderObject = new JSONObject();
-			orderObject.put("type", o.getType());
-			orderObject.put("price", o.getPrice());
-			obj.putOpt(o.getId().toString(), orderObject);
+		for(Map.Entry<OrderType, ArrayList<Order>> orderType : orderList.entrySet()) {	
+			JSONObject ordersList = new JSONObject();
+			for(Order o : orderType.getValue()) {
+				JSONObject orderObject = new JSONObject();
+				orderObject.put("type", o.getType());
+				orderObject.put("price", o.getPrice());
+				ordersList.putOpt(o.getId().toString(), orderObject);
+			}
+			obj.putOpt(orderType.getKey().name(), ordersList);
 		}
 		return obj;
 	}

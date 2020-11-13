@@ -1,6 +1,7 @@
 package com.chanan.ideaTrading;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
+
+import com.chanan.ideaTrading.Order.OrderType;
 
 @Path("/")
 public class IdeaTradingPublicRest {
@@ -38,18 +41,28 @@ public class IdeaTradingPublicRest {
 	@Path("/orders/{playerName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPlayerOrders(@PathParam("playerName") String playerName) {
-		ArrayList<Order> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
 		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
 		return Response.status(200).entity(playerOrdersJson.toMap()).build();
 	}
 	
 	@GET
-	@Path("/orders/{playerName}/{orderId}")
+	@Path("/orders/{playerName}/{orderType}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPlayerOrder(@PathParam("playerName") String playerName, @PathParam("orderId") String orderId) {
-		ArrayList<Order> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+	public Response getPlayerOrderByType(@PathParam("playerName") String playerName, @PathParam("orderType") String orderType) {
+		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
 		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
-		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderId).toMap()).build();
+		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).toMap()).build();
+	}
+	
+	@GET
+	@Path("/orders/{playerName}/{orderType}/{orderId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPlayerOrderByType(@PathParam("playerName") String playerName, @PathParam("orderType") String orderType, 
+			@PathParam("orderId") String orderId) {
+		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
+		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).getJSONObject(orderId).toMap()).build();
 	}
 	
 	@POST

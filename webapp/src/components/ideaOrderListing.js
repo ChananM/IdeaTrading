@@ -4,11 +4,13 @@ class IdeaOrderListing extends React.Component {
 
     getListing() {
         let listing = [];
-        for (let [key, value] of Object.entries(this.props.orders)) {
+        let buyOrders = Object.entries(this.props.orders.BUY);
+        let sellOrders = Object.entries(this.props.orders.SELL);
+        for (let i = 0; i < Math.max(buyOrders.length, sellOrders.length); i++) {
             listing.push(
-                <tr key={key}>
-                    <td>{value.type} - {value.price}</td>
-                    <td>{value.type} - {value.price}</td>
+                <tr key={(buyOrders[i] ? buyOrders[i][0] : 'N') + ' - ' + (sellOrders[i] ? sellOrders[i][0] : 'N')}>
+                    {buyOrders[i] ? <td>{buyOrders[i][1].price}</td> : <td> - </td>}
+                    {sellOrders[i] ? <td>{sellOrders[i][1].price}</td> : <td> - </td>}
                 </tr>
             )
         }

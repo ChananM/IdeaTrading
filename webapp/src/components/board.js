@@ -1,6 +1,8 @@
 import React from 'react';
 import Idea from './idea';
 
+const axios = require('axios').default;
+
 class Board extends React.Component {
 
     intervalId;
@@ -21,9 +23,8 @@ class Board extends React.Component {
     }
 
     getAllOrders() {
-        fetch('http://localhost:8080/IdeaTrading/rest/orders')
-            .then(res => res.json())
-            .then((result) => this.updateBoard(result));
+        axios.get('http://localhost:8080/IdeaTrading/rest/orders')
+            .then((response) => this.updateBoard(response.data));
     }
 
     updateBoard(orders) {
