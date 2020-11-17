@@ -6,7 +6,7 @@ class Idea extends React.Component {
 
     render() {
         return (
-            <table>
+            <table className="idea">
                 <tbody>
                     <tr>
                         <th>{this.props.name}</th>
@@ -16,7 +16,7 @@ class Idea extends React.Component {
                     </tr>
                     <tr>
                         <td>
-                            <OrderButton idea={this.props.name} />
+                            <OrderButton idea={this.props.name} username={this.props.username} password={this.props.password} />
                         </td>
                     </tr>
                 </tbody>

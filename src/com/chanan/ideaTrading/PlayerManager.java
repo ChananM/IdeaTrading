@@ -1,38 +1,57 @@
 package com.chanan.ideaTrading;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
 public class PlayerManager {
-	
+
 	// Singleton implementation
-	
+
 	private static PlayerManager playerManager;
 
 	public static PlayerManager getInstance() {
-		if(playerManager == null) {
+		if (playerManager == null) {
 			playerManager = new PlayerManager();
 		}
 		return playerManager;
 	}
-	
-	
+
 	// Class Implementation
-	
-	private List<Player> players;
-	
+
+	private Map<String, Player> players;
+
+	public Map<String, Player> getPlayers() {
+		return players;
+	}
+
 	public void initPlayers(JSONObject config) {
-		players = new ArrayList<Player>();
-		for(String playerName : config.keySet()) {
+		players = new HashMap<String, Player>();
+		for (String playerName : config.keySet()) {
 			JSONObject playerConfig = config.getJSONObject(playerName);
-			getPlayers().add(new Player(playerName, playerConfig.getString("password"), playerConfig.getDouble("money")));
+			getPlayers().put(playerName,
+					new Player(playerName, playerConfig.getString("password"), playerConfig.getDouble("money")));
 		}
 	}
 
-	public List<Player> getPlayers() {
-		return players;
+	public boolean login(String playerName, String password) {
+		try {
+			return players.get(playerName).getPassword().equals(password);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public JSONObject getPlayerData(String playerName, String password) {
+		JSONObject obj = new JSONObject();
+		if (login(playerName, password)) {
+			Player p = players.get(playerName);
+			obj.put("money", p.getMoney());
+			obj.put("openOrders", OrderManager.getInstance().getOrdersJson(p.getOpenOrders()));
+			obj.put("stocks", p.getStocks());
+		}
+		return obj;
 	}
 
 }

@@ -11,7 +11,27 @@ body {
   text-align: center;
 }
 
+.loginForm{
+  display: flex;
+  flex-direction: column;
+  max-width: 15vw;
+  margin: auto;
+}
+
+.flex{
+  display: flex;
+}
+
+.flex-row{
+  flex-direction: row;
+}
+
+.flex-column{
+  flex-direction: column;
+}
+
 .board {
+  flex: 3;
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -22,6 +42,36 @@ body {
   color: white;
 }
 
+.playerArea{
+  flex: 1;
+  background-color: #4a5263;
+}
+
+.idea{
+  margin: auto;
+}
+
 table {
   border: white solid 2px;
+}
+
+.centeredSpan{
+  flex: 1;
+  text-align: center;
+}
+
+.margin-top{
+  margin-top: 5vh;
+}
+
+.green{
+  color: green;
+}
+
+.red{
+  color: red;
+}
+
+.white{
+  color: white;
 }

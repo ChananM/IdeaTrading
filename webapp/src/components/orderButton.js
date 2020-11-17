@@ -19,7 +19,10 @@ class OrderButton extends React.Component {
         this.state = {
             open: false,
             orderType: 'BUY',
-            orderAmount: 0
+            orderPrice: 0,
+            orderAmount: 0,
+            confirmationOpen: false,
+            orderResponse: undefined,
         };
 
         this.handleClickOpen = this.handleClickOpen.bind(this);
@@ -35,16 +38,29 @@ class OrderButton extends React.Component {
 
     handleClose() {
         this.setState({
-            open: false
+            open: false,
+            confirmationOpen: false
         });
     };
 
     sendOrder() {
-        axios.post('http://localhost:8080/IdeaTrading/rest/' + this.props.idea, {
-            ownerName: 'chanan',
+        axios.post('http://localhost:8080/IdeaTrading/rest/orders/' + this.props.idea, {
+            playerName: this.props.username,
+            password: this.props.password,
+            idea: this.props.idea,
+            ownerName: this.props.username,
             orderType: this.state.orderType,
-            price: this.state.orderAmount
-        }).then((response) => alert(response.data));
+            shareAmount: this.state.orderAmount,
+            pricePerShare: this.state.orderPrice
+        }).then((response) => {
+            this.setState({
+                orderPrice: 0,
+                orderAmount: 0,
+                open: false,
+                confirmationOpen: true,
+                orderResponse: response.data
+            });
+        });
     }
 
     render() {
@@ -55,15 +71,54 @@ class OrderButton extends React.Component {
                     <DialogTitle id="form-dialog-title">Put order on {this.props.idea}</DialogTitle>
                     <DialogContent>
                         <DialogContentText>Select order type and amount</DialogContentText>
+                        <DialogContentText>Please note the price is per share and not the total price</DialogContentText>
                         <RadioGroup row aria-label="orderType" name="orderType" value={this.state.orderType} onChange={(event) => this.setState({ orderType: event.target.value })}>
                             <FormControlLabel value="BUY" control={<Radio />} label="Buy" />
                             <FormControlLabel value="SELL" control={<Radio />} label="Sell" />
                         </RadioGroup>
-                        <TextField autoFocus margin="dense" id="amount" label="Amount" type="number" fullWidth onChange={(event) => this.setState({ orderAmount: event.target.value })} />
+                        <TextField error={this.state.orderAmount <= 0 || !/^([0-9]\d*)$/.test(this.state.orderAmount)}
+                            defaultValue="0"
+                            helperText="Value must be an integer bigger than 0"
+                            autoFocus
+                            margin="dense"
+                            id="amount"
+                            label="How much shares?"
+                            type="number"
+                            fullWidth
+                            onChange={(event) => this.setState({ orderAmount: event.target.value })} />
+                        <TextField error={this.state.orderPrice <= 0}
+                            defaultValue="0"
+                            helperText="Value must be a number bigger than 0"
+                            margin="dense"
+                            id="price"
+                            label="For how much per share?"
+                            type="number"
+                            fullWidth onChange={(event) => this.setState({ orderPrice: event.target.value })} />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} color="primary">Cancel</Button>
-                        <Button onClick={this.sendOrder} color="primary">Send</Button>
+                        <Button disabled={this.state.orderAmount <= 0 || !/^([0-9]\d*)$/.test(this.state.orderAmount) || this.state.orderPrice <= 0}
+                            onClick={this.sendOrder}
+                            color="primary">
+                            Send
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={this.state.confirmationOpen}
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">Order confirmation</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {this.state.orderResponse}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary" autoFocus>
+                            Ok
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>

@@ -2,23 +2,26 @@ package com.chanan.ideaTrading;
 
 import org.json.JSONObject;
 
-public class Order {
-	
+public class Order implements Comparable<Order> {
+
 	private Long id;
+	private String idea;
 	private String ownerName;
 	private OrderType type;
-	private double price;
-	
-	
-	public enum OrderType{
+	private int shareAmount;
+	private double pricePerShare;
+
+	public enum OrderType {
 		BUY, SELL
 	}
-	
+
 	public Order(JSONObject jsonObject) {
 		this.id = OrderManager.getNextOrderId();
-		this.setOwnerName(jsonObject.getString("ownerName"));
+		this.idea = jsonObject.getString("idea");
+		this.ownerName = jsonObject.getString("ownerName");
 		this.type = OrderType.valueOf(jsonObject.getString("orderType"));
-		this.price = jsonObject.getDouble("price");
+		this.shareAmount = jsonObject.getInt("shareAmount");
+		this.pricePerShare = jsonObject.getDouble("pricePerShare");
 	}
 
 	public Long getId() {
@@ -27,6 +30,14 @@ public class Order {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getIdea() {
+		return idea;
+	}
+
+	public void setIdea(String idea) {
+		this.idea = idea;
 	}
 
 	public String getOwnerName() {
@@ -45,12 +56,34 @@ public class Order {
 		this.type = type;
 	}
 
-	public double getPrice() {
-		return price;
+	public int getShareAmount() {
+		return shareAmount;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
+	public void setShareAmount(int shareAmount) {
+		this.shareAmount = shareAmount;
 	}
-	
+
+	public double getPricePerShare() {
+		return pricePerShare;
+	}
+
+	public void setPricePerShare(double price) {
+		this.pricePerShare = price;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		Order other = (Order) obj;
+		return this.id == other.id;
+	}
+
+	@Override
+	public int compareTo(Order o) {
+		if (o.getType() == OrderType.SELL) {
+			return Double.compare(this.getPricePerShare(), o.getPricePerShare());
+		} else {
+			return Double.compare(o.getPricePerShare(), this.getPricePerShare());
+		}
+	}
 }
