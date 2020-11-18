@@ -1,5 +1,11 @@
 import React from 'react';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, ThemeProvider, createMuiTheme } from '@material-ui/core';
+
+const theme = createMuiTheme({
+    palette: {
+        type: "dark"
+    }
+});
 
 export default class Login extends React.Component {
 
@@ -18,21 +24,23 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            <form className='loginForm'>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="username"
-                    label="Username"
-                    type="text"
-                    onChange={(event) => this.setState({ username: event.target.value })} />
-                <TextField
-                    margin="dense"
-                    id="password"
-                    label="Password"
-                    type="password"
-                    onChange={(event) => this.setState({ password: event.target.value })} />
-                <Button onClick={this.handleLogin} color="primary">Login</Button>
+            <form className='loginForm white'>
+                <ThemeProvider theme={theme}>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="username"
+                        label="Idea Name"
+                        type="text"
+                        onChange={(event) => this.setState({ username: event.target.value })} />
+                    <TextField
+                        margin="dense"
+                        id="password"
+                        label="Password"
+                        type="password"
+                        onChange={(event) => this.setState({ password: event.target.value })} />
+                    <Button onClick={this.handleLogin}>Login</Button>
+                </ThemeProvider>
             </form>
         );
     }

@@ -46,10 +46,10 @@ export default class Game extends React.Component {
 
     render() {
         return (
-            <div className="App">
+            <div>
                 { this.state.loggedIn ?
                     <div className="flex flex-row">
-                        <PlayerArea username={this.state.username} playerData={this.state.gameData.playerData} />
+                        <PlayerArea username={this.state.username} password={this.state.password} playerData={this.state.gameData.playerData} />
                         <Board username={this.state.username} password={this.state.password} ordersList={this.state.gameData.orders} />
                     </div>
                     :

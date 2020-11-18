@@ -40,7 +40,9 @@ public class OrderManager {
 		JSONObject ordersObject = new JSONObject();
 		for (Order o : ordersList) {
 			JSONObject orderObject = new JSONObject();
+			orderObject.put("id", o.getId());
 			orderObject.put("type", o.getType());
+			orderObject.put("idea", o.getIdea());
 			orderObject.put("pricePerShare", o.getPricePerShare());
 			orderObject.put("shareAmount", o.getShareAmount());
 			ordersObject.putOpt(o.getId().toString(), orderObject);

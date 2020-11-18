@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -78,12 +79,27 @@ public class IdeaTradingPublicRest {
 	@GET
 	@Path("/orders/{playerName}/{orderType}/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPlayerOrderByType(@PathParam("playerName") String playerName,
-			@PathParam("orderType") String orderType, @PathParam("orderId") String orderId) {
+	public Response getOrder(@PathParam("playerName") String playerName, @PathParam("orderType") String orderType,
+			@PathParam("orderId") String orderId) {
 		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
 		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
 		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).getJSONObject(orderId).toMap())
 				.build();
+	}
+
+	@DELETE
+	@Path("/orders/{idea}/{orderType}/{orderId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteOrder(@PathParam("idea") String idea, @PathParam("orderType") String orderType,
+			@PathParam("orderId") String orderId, @QueryParam("playerName") String playerName,
+			@QueryParam("password") String password) {
+		if (PlayerManager.getInstance().login(playerName, password)) {
+			Player requester = PlayerManager.getInstance().getPlayers().get(playerName);
+			GameManager.getInstance().removeOrder(requester, idea, orderId, OrderType.valueOf(orderType));
+			return Response.status(200).build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@POST

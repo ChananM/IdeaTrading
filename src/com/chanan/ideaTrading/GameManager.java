@@ -34,7 +34,6 @@ public class GameManager {
 	}
 
 	public void initGame(JSONObject config) {
-
 		PlayerManager.getInstance().initPlayers(config);
 		ordersMap = new HashMap<String, Map<OrderType, ArrayList<Order>>>();
 		Map<String, Player> players = PlayerManager.getInstance().getPlayers();
@@ -53,7 +52,8 @@ public class GameManager {
 	public synchronized String addOrder(String idea, Order newOrder) {
 		String msg;
 		Player requester = PlayerManager.getInstance().getPlayers().get(newOrder.getOwnerName());
-		if ((newOrder.getPricePerShare() * newOrder.getShareAmount()) <= requester.getMoney()) {
+		boolean newOrderCondition = getOrderCondition(requester, newOrder);
+		if (newOrderCondition) {
 			List<Order> matchingOrders = getMatchingOrders(newOrder);
 			if (matchingOrders.size() > 0) {
 				performTransaction(requester, newOrder, matchingOrders);
@@ -68,9 +68,20 @@ public class GameManager {
 				msg = "Order submitted successfully";
 			}
 		} else {
-			msg = "Not enough money to fulfill the request";
+			msg = "Not enough money or shares to fulfill the request";
 		}
 		return msg;
+	}
+
+	private boolean getOrderCondition(Player requester, Order newOrder) {
+		// TODO: Aggregate data from open orders to verify order validity (enough
+		// money/stocks)
+		if (newOrder.getType() == OrderType.BUY) {
+			return (newOrder.getPricePerShare() * newOrder.getShareAmount()) <= requester.getMoney();
+		} else {
+			return newOrder.getShareAmount() <= (requester.getStocks().get(newOrder.getIdea()) == null ? 0
+					: requester.getStocks().get(newOrder.getIdea()));
+		}
 	}
 
 	private List<Order> getMatchingOrders(Order order) {
@@ -124,6 +135,12 @@ public class GameManager {
 	private void saveOrder(String idea, Player requester, Order newOrder) {
 		ordersMap.get(idea).get(newOrder.getType()).add(newOrder);
 		requester.getOpenOrders().add(newOrder);
+	}
+
+	public synchronized void removeOrder(Player requester, String idea, String orderId, OrderType orderType) {
+		Order orderToRemove = new Order(Long.valueOf(orderId));
+		ordersMap.get(idea).get(orderType).remove(orderToRemove);
+		requester.getOpenOrders().remove(orderToRemove);
 	}
 
 	public JSONObject getOrderMapJson() {

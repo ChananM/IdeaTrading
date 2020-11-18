@@ -15,6 +15,10 @@ public class Order implements Comparable<Order> {
 		BUY, SELL
 	}
 
+	public Order(Long orderId) {
+		this.id = orderId;
+	}
+
 	public Order(JSONObject jsonObject) {
 		this.id = OrderManager.getNextOrderId();
 		this.idea = jsonObject.getString("idea");

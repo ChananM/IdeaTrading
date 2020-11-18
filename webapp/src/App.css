@@ -9,9 +9,13 @@ body {
 
 .App {
   text-align: center;
+  background-image: radial-gradient(circle, #282c34, #4a5263);
 }
 
 .loginForm{
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
   display: flex;
   flex-direction: column;
   max-width: 15vw;
@@ -47,11 +51,16 @@ body {
   background-color: #4a5263;
 }
 
-.idea{
-  margin: auto;
+.playerAreaModule{
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  margin-left: 2vw;
+  margin-right: 2vw;
+  flex: 1;
 }
 
-table {
+.idea{
+  margin: auto;
   border: white solid 2px;
 }
 
