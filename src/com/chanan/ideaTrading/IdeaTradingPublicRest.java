@@ -25,10 +25,14 @@ public class IdeaTradingPublicRest {
 	@Path("/game")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response initGame(String gameConfig) {
-		JSONObject gameConfiguration = new JSONObject(gameConfig);
-		GameManager.getInstance().initGame(gameConfiguration);
-		return Response.status(200).entity("Game initiated successfuly!").build();
+	public Response initGame(@QueryParam("password") String password, String gameConfig) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			JSONObject gameConfiguration = new JSONObject(gameConfig);
+			GameManager.getInstance().initGame(gameConfiguration);
+			return Response.status(200).entity("Game initiated successfuly!").build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@GET
@@ -45,46 +49,104 @@ public class IdeaTradingPublicRest {
 	public Response getGameData(@QueryParam("playerName") String playerName, @QueryParam("password") String password) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.putOpt("orders", GameManager.getInstance().getOrderMapJson());
-		jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayerData(playerName, password));
+		if ("admin".equals(playerName) && PlayerManager.getInstance().isAdmin(password)) {
+			jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayersData());
+		} else {
+			jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayerData(playerName, password));
+		}
 		return Response.status(200).entity(jsonObject.toMap()).build();
+	}
+
+	@POST
+	@Path("/game/status")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getGameData(@QueryParam("password") String password, @QueryParam("status") boolean status) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			GameManager.getInstance().setStatus(status);
+			return Response.status(200).build();
+		} else {
+			return Response.status(403).build();
+		}
+	}
+
+	@POST
+	@Path("/game/addMoney")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addMoneyToPlayers(@QueryParam("password") String password, @QueryParam("amount") double amount) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			GameManager.getInstance().addMoneyToPlayers(amount);
+			return Response.status(200).build();
+		} else {
+			return Response.status(403).build();
+		}
+	}
+
+	@POST
+	@Path("/game/finalize")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response finalizeGame(@QueryParam("password") String password, String winners) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			JSONObject jsonObject = new JSONObject(winners);
+			GameManager.getInstance().finalizeGame(jsonObject);
+			return Response.status(200).build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@GET
 	@Path("/orders")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrdersMap() {
-		JSONObject jsonObject = GameManager.getInstance().getOrderMapJson();
-		return Response.status(200).entity(jsonObject.toMap()).build();
+	public Response getOrdersMap(@QueryParam("password") String password) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			JSONObject jsonObject = GameManager.getInstance().getOrderMapJson();
+			return Response.status(200).entity(jsonObject.toMap()).build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@GET
 	@Path("/orders/{playerName}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPlayerOrders(@PathParam("playerName") String playerName) {
-		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
-		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
-		return Response.status(200).entity(playerOrdersJson.toMap()).build();
+	public Response getPlayerOrders(@PathParam("playerName") String playerName,
+			@QueryParam("password") String password) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+			JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
+			return Response.status(200).entity(playerOrdersJson.toMap()).build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@GET
 	@Path("/orders/{playerName}/{orderType}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPlayerOrderByType(@PathParam("playerName") String playerName,
-			@PathParam("orderType") String orderType) {
-		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
-		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
-		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).toMap()).build();
+			@PathParam("orderType") String orderType, @QueryParam("password") String password) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+			JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
+			return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).toMap()).build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@GET
 	@Path("/orders/{playerName}/{orderType}/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getOrder(@PathParam("playerName") String playerName, @PathParam("orderType") String orderType,
-			@PathParam("orderId") String orderId) {
-		Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
-		JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
-		return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).getJSONObject(orderId).toMap())
-				.build();
+			@PathParam("orderId") String orderId, @QueryParam("password") String password) {
+		if (PlayerManager.getInstance().isAdmin(password)) {
+			Map<OrderType, ArrayList<Order>> playerOrders = GameManager.getInstance().getOrdersMap().get(playerName);
+			JSONObject playerOrdersJson = OrderManager.getInstance().getOrdersJson(playerOrders);
+			return Response.status(200).entity(playerOrdersJson.getJSONObject(orderType).getJSONObject(orderId).toMap())
+					.build();
+		} else {
+			return Response.status(403).build();
+		}
 	}
 
 	@DELETE

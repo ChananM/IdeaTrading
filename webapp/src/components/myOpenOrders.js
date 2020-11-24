@@ -13,7 +13,7 @@ const theme = createMuiTheme({
 export default class MyOpenOrders extends React.Component {
 
     cancelOrder(idea, orderType, orderId) {
-        axios.delete('http://localhost:8080/IdeaTrading/rest/orders/' + idea + '/' + orderType + '/' + orderId + '?playerName=' + this.props.username + '&password=' + this.props.password)
+        axios.delete('/IdeaTrading/rest/orders/' + idea + '/' + orderType + '/' + orderId + '?playerName=' + this.props.username + '&password=' + this.props.password)
             .then((response) => {
                 // alert('Order canceled');
             })

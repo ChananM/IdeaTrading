@@ -43,6 +43,18 @@ public class PlayerManager {
 		}
 	}
 
+	public boolean isAdmin(String password) {
+		return "Crs5p]zN?7QFw>GJ".equals(password);
+	}
+
+	public JSONObject getPlayersData() {
+		JSONObject obj = new JSONObject();
+		for (Player p : players.values()) {
+			obj.put(p.getName(), getPlayerData(p.getName(), p.getPassword()));
+		}
+		return obj;
+	}
+
 	public JSONObject getPlayerData(String playerName, String password) {
 		JSONObject obj = new JSONObject();
 		if (login(playerName, password)) {

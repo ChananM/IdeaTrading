@@ -1,6 +1,7 @@
 package com.chanan.ideaTrading;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,8 @@ public class GameManager {
 
 	// Class Implementation
 
+	private boolean gameStatus = false;
+
 	// This maps playerName to a map of order type to order
 	private Map<String, Map<OrderType, ArrayList<Order>>> ordersMap;
 
@@ -44,6 +47,43 @@ public class GameManager {
 		}
 	}
 
+	public void setStatus(boolean status) {
+		this.gameStatus = status;
+	}
+
+	public void addMoneyToPlayers(double amount) {
+		Collection<Player> players = PlayerManager.getInstance().getPlayers().values();
+		for (Player p : players) {
+			p.setMoney(p.getMoney() + amount);
+		}
+	}
+
+	public void finalizeGame(JSONObject winners) {
+		Map<String, Player> players = PlayerManager.getInstance().getPlayers();
+		String firstPlace = winners.getString("firstPlace"), secondPlace = winners.getString("secondPlace"),
+				thirdPlace = winners.getString("thirdPlace");
+		if (players.get(firstPlace) != null && players.get(secondPlace) != null && players.get(thirdPlace) != null) {
+			for (Player p : players.values()) {
+				Map<String, Integer> playerStocks = p.getStocks();
+				for (Map.Entry<String, Integer> playerStock : playerStocks.entrySet()) {
+					if (playerStock.getKey().equals(firstPlace)) {
+						p.setMoney(p.getMoney() + (playerStock.getValue() * 10));
+					} else if (playerStock.getKey().equals(secondPlace)) {
+						p.setMoney(p.getMoney() + (playerStock.getValue() * 5));
+					} else if (playerStock.getKey().equals(thirdPlace)) {
+						p.setMoney(p.getMoney() + (playerStock.getValue() * 2));
+					} else {
+						p.setMoney(p.getMoney() + (playerStock.getValue() * 1));
+					}
+				}
+				p.getStocks().clear();
+				p.getOpenOrders().clear();
+				ordersMap.get(p.getName()).get(OrderType.BUY).clear();
+				ordersMap.get(p.getName()).get(OrderType.SELL).clear();
+			}
+		}
+	}
+
 	/**
 	 * @param idea     The idea on which the order is put
 	 * @param newOrder The new order
@@ -52,6 +92,9 @@ public class GameManager {
 	public synchronized String addOrder(String idea, Order newOrder) {
 		String msg;
 		Player requester = PlayerManager.getInstance().getPlayers().get(newOrder.getOwnerName());
+		if (!this.gameStatus) {
+			return "The game has been stopped by admin, orders can't be placed";
+		}
 		boolean newOrderCondition = getOrderCondition(requester, newOrder);
 		if (newOrderCondition) {
 			List<Order> matchingOrders = getMatchingOrders(newOrder);
@@ -74,13 +117,19 @@ public class GameManager {
 	}
 
 	private boolean getOrderCondition(Player requester, Order newOrder) {
-		// TODO: Aggregate data from open orders to verify order validity (enough
-		// money/stocks)
 		if (newOrder.getType() == OrderType.BUY) {
-			return (newOrder.getPricePerShare() * newOrder.getShareAmount()) <= requester.getMoney();
+			double requesterAggregatedDebt = requester.getOpenOrders().stream()
+					.filter(openOrder -> openOrder.getType() == OrderType.BUY)
+					.mapToDouble(openOrder -> openOrder.getPricePerShare() * openOrder.getShareAmount()).sum();
+			return (newOrder.getPricePerShare() * newOrder.getShareAmount()) <= (requester.getMoney()
+					- requesterAggregatedDebt);
 		} else {
+			int requesterAggregatedDebt = requester.getOpenOrders().stream()
+					.filter(openOrder -> openOrder.getType() == OrderType.SELL
+							&& openOrder.getIdea().equals(newOrder.getIdea()))
+					.mapToInt(openOrder -> openOrder.getShareAmount()).sum();
 			return newOrder.getShareAmount() <= (requester.getStocks().get(newOrder.getIdea()) == null ? 0
-					: requester.getStocks().get(newOrder.getIdea()));
+					: requester.getStocks().get(newOrder.getIdea())) - requesterAggregatedDebt;
 		}
 	}
 

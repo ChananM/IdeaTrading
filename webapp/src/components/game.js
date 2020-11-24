@@ -15,11 +15,11 @@ export default class Game extends React.Component {
     };
 
     login(username, password) {
-        axios.get('http://localhost:8080/IdeaTrading/rest/game/login?playerName=' + username + '&password=' + password)
+        axios.get('/IdeaTrading/rest/game/login?playerName=' + username + '&password=' + password)
             .then((response) => {
                 let loggedIn = response.data;
-                this.intervalId = setInterval(() => this.getGameData(), 1000);
                 if (loggedIn) {
+                    this.intervalId = setInterval(() => this.getGameData(), 1000);
                     this.setState({
                         username: username,
                         password: password,
@@ -32,7 +32,7 @@ export default class Game extends React.Component {
     }
 
     getGameData() {
-        axios.get('http://localhost:8080/IdeaTrading/rest/game/data?playerName=' + this.state.username + '&password=' + this.state.password)
+        axios.get('/IdeaTrading/rest/game/data?playerName=' + this.state.username + '&password=' + this.state.password)
             .then((response) => {
                 this.setState({
                     gameData: response.data

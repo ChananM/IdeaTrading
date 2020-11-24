@@ -51,7 +51,7 @@ export default class OrderButton extends React.Component {
     };
 
     sendOrder() {
-        axios.post('http://localhost:8080/IdeaTrading/rest/orders/' + this.props.idea, {
+        axios.post('/IdeaTrading/rest/orders/' + this.props.idea, {
             playerName: this.props.username,
             password: this.props.password,
             idea: this.props.idea,

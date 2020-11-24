@@ -1,5 +1,7 @@
 {
   "name": "idea-trading",
+  "homepage": "/trade",
+  "proxy": "http://localhost/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
