@@ -11,14 +11,14 @@ class IdeaOrderListing extends React.Component {
                 <tr key={(buyOrders[i] ? buyOrders[i][0] : 'N') + ' - ' + (sellOrders[i] ? sellOrders[i][0] : 'N')}>
                     <td >
                         <div className="flex flex-row">
-                            {buyOrders[i] ? <span className="centeredSpan">{buyOrders[i][1].shareAmount}</span> : <span className="centeredSpan"> - </span>}
-                            {buyOrders[i] ? <span className="centeredSpan green">{buyOrders[i][1].pricePerShare}</span> : <span className="centeredSpan"> - </span>}
+                            {buyOrders[i] ? <span className="centeredSpan big-font">{buyOrders[i][1].shareAmount}</span> : <span className="centeredSpan big-font"> - </span>}
+                            {buyOrders[i] ? <span className="centeredSpan green big-font">{buyOrders[i][1].pricePerShare}</span> : <span className="centeredSpan big-font"> - </span>}
                         </div>
                     </td>
                     <td >
                         <div className="flex flex-row">
-                            {sellOrders[i] ? <span className="centeredSpan red">{sellOrders[i][1].pricePerShare}</span> : <span className="centeredSpan"> - </span>}
-                            {sellOrders[i] ? <span className="centeredSpan">{sellOrders[i][1].shareAmount}</span> : <span className="centeredSpan"> - </span>}
+                            {sellOrders[i] ? <span className="centeredSpan red big-font">{sellOrders[i][1].pricePerShare}</span> : <span className="centeredSpan big-font"> - </span>}
+                            {sellOrders[i] ? <span className="centeredSpan big-font">{sellOrders[i][1].shareAmount}</span> : <span className="centeredSpan big-font"> - </span>}
                         </div>
                     </td>
                 </tr>
@@ -29,11 +29,25 @@ class IdeaOrderListing extends React.Component {
 
     render() {
         return (
-            <table>
+            <table className="mid-width">
                 <tbody>
+                    <tr >
+                        <th className="centered">Buy</th>
+                        <th className="centered">Sell</th>
+                    </tr>
                     <tr>
-                        <th>Buy Orders</th>
-                        <th>Sell Orders</th>
+                        <td className="bottom-border" />
+                        <td className="bottom-border" />
+                    </tr>
+                    <tr>
+                        <th className="small-width centered">
+                            <span className="margin-width">shares</span>
+                            <span className="margin-width">price</span>
+                        </th>
+                        <th className="small-width centered">
+                            <span className="margin-width">price</span>
+                            <span className="margin-width">shares</span>
+                        </th>
                     </tr>
                     {this.getListing()}
                 </tbody>

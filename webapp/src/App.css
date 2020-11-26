@@ -36,6 +36,7 @@ body {
 
 .board {
   flex: 3;
+  flex-wrap: wrap;
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -60,8 +61,17 @@ body {
 }
 
 .idea{
-  margin: auto;
-  border: white solid 2px;
+  margin: 1vw;
+  border: white solid 1px;
+  border-radius: 3%;
+}
+
+.bottom-border{
+  background-color: white;
+}
+
+.centered{
+  text-align: center !important;
 }
 
 .centeredSpan{
@@ -69,12 +79,29 @@ body {
   text-align: center;
 }
 
+.big-font{
+  font-size: large;
+}
+
 .margin-top{
   margin-top: 5vh;
 }
 
+.margin-width{
+  margin-left: 0.5vw;
+  margin-right: 0.5vw;
+}
+
+.small-width{
+  min-width: 5vw;
+}
+
+.mid-width{
+  min-width: 8vw;
+}
+
 .green{
-  color: green;
+  color: rgb(108, 196, 108);
 }
 
 .red{
