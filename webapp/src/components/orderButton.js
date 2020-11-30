@@ -9,15 +9,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
+import { getTheme } from '../util/util';
 
 const axios = require('axios').default
-
-const theme = createMuiTheme({
-    palette: {
-        type: "dark"
-    }
-});
 
 export default class OrderButton extends React.Component {
 
@@ -74,7 +68,7 @@ export default class OrderButton extends React.Component {
         return (
             <div>
                 <Button variant="outlined" color="inherit" onClick={this.handleClickOpen}>Put Order</Button>
-                <ThemeProvider theme={theme}>
+                <ThemeProvider theme={getTheme()}>
                     <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                         <DialogTitle id="form-dialog-title">Put order on {this.props.idea}</DialogTitle>
                         <DialogContent>

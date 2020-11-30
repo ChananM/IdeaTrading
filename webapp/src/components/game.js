@@ -19,7 +19,7 @@ export default class Game extends React.Component {
             .then((response) => {
                 let loggedIn = response.data;
                 if (loggedIn) {
-                    this.intervalId = setInterval(() => this.getGameData(), 1000);
+                    openDataSocket();
                     this.setState({
                         username: username,
                         password: password,
@@ -31,17 +31,21 @@ export default class Game extends React.Component {
             });
     }
 
-    getGameData() {
-        axios.get('/IdeaTrading/rest/game/data?playerName=' + this.state.username + '&password=' + this.state.password)
-            .then((response) => {
-                this.setState({
-                    gameData: response.data
-                });
+    openDataSocket() {
+        this.ideasSocket = new WebSocket("ws://" + window.location.hostname + "/IdeaTrading/ideasSocket/" + username);
+        ideasSocket.onmessage = (event) => {
+            this.setState({
+                gameData: JSON.parse(event.data)
             });
+        }
+        // ideasSocket.onopen = (event) => { };
+        ideasSocket.onclose = (event) => {
+            alert("Connection to the server lost.\nPlease refresh the page and login again.");
+        };
     }
 
     componentWillUnmount() {
-        clearInterval(this.intervalId);
+        this.ideasSocket.close();
     }
 
     render() {

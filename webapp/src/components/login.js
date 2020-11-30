@@ -1,11 +1,6 @@
 import React from 'react';
-import { TextField, Button, ThemeProvider, createMuiTheme } from '@material-ui/core';
-
-const theme = createMuiTheme({
-    palette: {
-        type: "dark"
-    }
-});
+import { TextField, Button, ThemeProvider } from '@material-ui/core';
+import { getTheme } from '../util/util';
 
 export default class Login extends React.Component {
 
@@ -25,7 +20,7 @@ export default class Login extends React.Component {
     render() {
         return (
             <form className='loginForm white'>
-                <ThemeProvider theme={theme}>
+                <ThemeProvider theme={getTheme()}>
                     <TextField
                         autoFocus
                         margin="dense"

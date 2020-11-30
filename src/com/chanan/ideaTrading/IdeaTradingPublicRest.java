@@ -47,14 +47,8 @@ public class IdeaTradingPublicRest {
 	@Path("/game/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGameData(@QueryParam("playerName") String playerName, @QueryParam("password") String password) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.putOpt("orders", GameManager.getInstance().getOrderMapJson());
-		if ("admin".equals(playerName) && PlayerManager.getInstance().isAdmin(password)) {
-			jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayersData());
-		} else {
-			jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayerData(playerName, password));
-		}
-		return Response.status(200).entity(jsonObject.toMap()).build();
+		JSONObject gameData = GameManager.getInstance().getGameData(playerName, password);
+		return Response.status(200).entity(gameData.toMap()).build();
 	}
 
 	@POST

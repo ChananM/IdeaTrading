@@ -1,14 +1,9 @@
 import React from 'react';
-import { Button, createMuiTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider } from '@material-ui/core';
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
+import { getTheme } from '../util/util';
 
 const axios = require('axios').default;
-
-const theme = createMuiTheme({
-    palette: {
-        type: "dark"
-    }
-});
 
 export default class MyOpenOrders extends React.Component {
 
@@ -22,7 +17,7 @@ export default class MyOpenOrders extends React.Component {
     render() {
         return (
             <div className="playerAreaModule">
-                <ThemeProvider theme={theme}>
+                <ThemeProvider theme={getTheme()}>
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
                             <TableHead>

@@ -1,18 +1,13 @@
 import React from 'react';
-import { createMuiTheme, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider } from '@material-ui/core';
-
-const theme = createMuiTheme({
-    palette: {
-        type: "dark"
-    }
-});
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider } from '@material-ui/core';
+import { getTheme } from '../util/util';
 
 export default class MyStocks extends React.Component {
 
     render() {
         return (
             <div className="playerAreaModule">
-                <ThemeProvider theme={theme}>
+                <ThemeProvider theme={getTheme()}>
                     <TableContainer component={Paper}>
                         <Table aria-label="simple table">
                             <TableHead>

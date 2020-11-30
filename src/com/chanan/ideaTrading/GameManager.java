@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import org.json.JSONObject;
 
 import com.chanan.ideaTrading.Order.OrderType;
+import com.chanan.webSocket.SessionManager;
+import com.chanan.webSocket.SessionManager.SessionInstance;
 
 public class GameManager {
 
@@ -110,6 +112,7 @@ public class GameManager {
 				saveOrder(idea, requester, newOrder);
 				msg = "Order submitted successfully";
 			}
+			broadcastGameData();
 		} else {
 			msg = "Not enough money or shares to fulfill the request";
 		}
@@ -186,10 +189,33 @@ public class GameManager {
 		requester.getOpenOrders().add(newOrder);
 	}
 
+	private void broadcastGameData() {
+		JSONObject ordersMapJson = getOrderMapJson();
+		Collection<Player> players = PlayerManager.getInstance().getPlayers().values();
+		for (Player p : players) {
+			JSONObject playerDataJson = PlayerManager.getInstance().getPlayerData(p.getName(), p.getPassword());
+			JSONObject gameData = new JSONObject();
+			gameData.putOpt("playerData", playerDataJson);
+			gameData.putOpt("orders", ordersMapJson);
+			SessionManager.getInstance(SessionInstance.IDEAS).sendMessage(p.getName(), gameData.toString());
+		}
+	}
+
 	public synchronized void removeOrder(Player requester, String idea, String orderId, OrderType orderType) {
 		Order orderToRemove = new Order(Long.valueOf(orderId));
 		ordersMap.get(idea).get(orderType).remove(orderToRemove);
 		requester.getOpenOrders().remove(orderToRemove);
+	}
+
+	public JSONObject getGameData(String playerName, String password) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.putOpt("orders", getOrderMapJson());
+		if ("admin".equals(playerName) && PlayerManager.getInstance().isAdmin(password)) {
+			jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayersData());
+		} else {
+			jsonObject.putOpt("playerData", PlayerManager.getInstance().getPlayerData(playerName, password));
+		}
+		return jsonObject;
 	}
 
 	public JSONObject getOrderMapJson() {
