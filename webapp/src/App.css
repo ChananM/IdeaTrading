@@ -60,6 +60,13 @@ body {
   flex: 1;
 }
 
+.notification-panel{
+  position: absolute;
+  min-width: 8vw;
+  min-height: 10vh;
+  left: 5vw;
+}
+
 .idea{
   margin: 1vw;
   border: white solid 1px;
@@ -79,12 +86,21 @@ body {
   text-align: center;
 }
 
+.align-self{
+  align-self: center;
+}
+
 .big-font{
   font-size: large;
 }
 
 .margin-top{
   margin-top: 5vh;
+}
+
+.margin-height{
+  margin-top: 2.5vh;
+  margin-bottom: 2.5vh;
 }
 
 .margin-width{
@@ -110,4 +126,8 @@ body {
 
 .white{
   color: white;
+}
+
+.hide{
+  display: none;
 }

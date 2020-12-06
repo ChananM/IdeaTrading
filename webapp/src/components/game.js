@@ -19,7 +19,7 @@ export default class Game extends React.Component {
             .then((response) => {
                 let loggedIn = response.data;
                 if (loggedIn) {
-                    openDataSocket();
+                    this.openDataSocket(username);
                     this.setState({
                         username: username,
                         password: password,
@@ -31,15 +31,15 @@ export default class Game extends React.Component {
             });
     }
 
-    openDataSocket() {
+    openDataSocket(username) {
         this.ideasSocket = new WebSocket("ws://" + window.location.hostname + "/IdeaTrading/ideasSocket/" + username);
-        ideasSocket.onmessage = (event) => {
+        this.ideasSocket.onmessage = (event) => {
             this.setState({
                 gameData: JSON.parse(event.data)
             });
         }
         // ideasSocket.onopen = (event) => { };
-        ideasSocket.onclose = (event) => {
+        this.ideasSocket.onclose = (event) => {
             alert("Connection to the server lost.\nPlease refresh the page and login again.");
         };
     }

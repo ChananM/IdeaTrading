@@ -10,6 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { getTheme } from '../util/util';
+import { ThemeProvider } from '@material-ui/core';
 
 const axios = require('axios').default
 
