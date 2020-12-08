@@ -58,6 +58,8 @@ public class GameManager {
 		for (Player p : players) {
 			p.setMoney(p.getMoney() + amount);
 		}
+		SessionManager.getInstance(SessionInstance.NOTIFICATIONS)
+				.broadcast("You just received additional " + amount + " GBP to your wallet! Go out and spend it!");
 	}
 
 	public void finalizeGame(JSONObject winners) {
@@ -83,6 +85,7 @@ public class GameManager {
 				ordersMap.get(p.getName()).get(OrderType.BUY).clear();
 				ordersMap.get(p.getName()).get(OrderType.SELL).clear();
 			}
+			broadcastGameData();
 		}
 	}
 
@@ -157,14 +160,19 @@ public class GameManager {
 				transact(newOrder.getIdea(), newOrder.getType(), requester, matchingOrderPlayer, transactionAmount,
 						match.getShareAmount());
 				newOrder.setShareAmount(newOrder.getShareAmount() - match.getShareAmount());
+				SessionManager.getInstance(SessionInstance.NOTIFICATIONS).sendMessage(match.getOwnerName(),
+						"Your " + match.getType().toString().toLowerCase() + " order on " + match.getIdea()
+								+ " was matched fully");
 			} else {
 				match.setShareAmount(match.getShareAmount() - newOrder.getShareAmount());
 				double transactionAmount = newOrder.getShareAmount() * match.getPricePerShare();
 				transact(newOrder.getIdea(), newOrder.getType(), requester, matchingOrderPlayer, transactionAmount,
 						newOrder.getShareAmount());
 				newOrder.setShareAmount(0);
+				SessionManager.getInstance(SessionInstance.NOTIFICATIONS).sendMessage(match.getOwnerName(),
+						"Your " + match.getType().toString().toLowerCase() + " order on " + match.getIdea()
+								+ " was matched partially");
 			}
-			// TODO: Send message to matching player his order was processed?
 		}
 	}
 
@@ -205,6 +213,7 @@ public class GameManager {
 		Order orderToRemove = new Order(Long.valueOf(orderId));
 		ordersMap.get(idea).get(orderType).remove(orderToRemove);
 		requester.getOpenOrders().remove(orderToRemove);
+		broadcastGameData();
 	}
 
 	public JSONObject getGameData(String playerName, String password) {

@@ -20,7 +20,7 @@ public class NotificationSocket {
 	public void onOpen(Session session, @PathParam("username") String username) throws IOException {
 		System.out.println("Opened notifications socket for " + username + ". Session id: " + session.getId());
 		SessionManager.getInstance(SessionInstance.NOTIFICATIONS).addSession(username, session);
-		session.getBasicRemote().sendText("");
+		session.getBasicRemote().sendText("Welcome to Idea Trading!");
 	}
 
 	@OnMessage

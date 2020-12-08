@@ -63,6 +63,7 @@ body {
 .notification-panel{
   position: absolute;
   min-width: 8vw;
+  max-width: 18vw;
   min-height: 10vh;
   left: 5vw;
 }
@@ -130,4 +131,8 @@ body {
 
 .hide{
   display: none;
+}
+
+.MuiListItemIcon-root{
+  min-width: 1.3vw !important;
 }

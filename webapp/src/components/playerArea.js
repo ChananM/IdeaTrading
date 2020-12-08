@@ -11,7 +11,7 @@ export default class PlayerArea extends React.Component {
         return (
             <div className="playerArea flex flex-column white">
                 <div className="margin-top flex flex-row">
-                    <Notifications></Notifications>
+                    <Notifications username={this.props.username}></Notifications>
                     <span className="centeredSpan align-self">{this.props.username}</span>
                     <span className="centeredSpan align-self">Money: {this.props.playerData.money}</span>
                 </div>

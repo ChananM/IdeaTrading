@@ -38,7 +38,6 @@ export default class Game extends React.Component {
                 gameData: JSON.parse(event.data)
             });
         }
-        // ideasSocket.onopen = (event) => { };
         this.ideasSocket.onclose = (event) => {
             alert("Connection to the server lost.\nPlease refresh the page and login again.");
         };
