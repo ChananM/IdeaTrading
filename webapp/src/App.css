@@ -65,7 +65,41 @@ body {
   min-width: 8vw;
   max-width: 18vw;
   min-height: 10vh;
+  max-height: 80vh;
+  overflow-y: auto;
   left: 5vw;
+}
+
+.notification-panel::-webkit-scrollbar {
+  display: none;
+}
+
+.notification-indicator{
+  position: absolute;
+  background-color: red;
+  border-radius: 30px;
+  min-width: 15px;
+  min-height: 15px;
+  width: 0.8vw;
+  height: 1.8vh;
+  font-size: 10px;
+  bottom: 0.5vh;
+  left: 1.8vw;
+  text-align: center;
+  justify-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1700px) {
+  .notification-indicator{
+    left: 2vw;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .notification-indicator{
+    left: 35px;
+  }
 }
 
 .idea{

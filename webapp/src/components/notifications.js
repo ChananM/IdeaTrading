@@ -13,6 +13,7 @@ export default class Notifications extends React.Component {
         this.state = {
             hideNotifications: true,
             newNotifications: false,
+            readNotifications: 0,
             notifications: []
         }
         this.setWrapperRef = this.setWrapperRef.bind(this);
@@ -28,6 +29,7 @@ export default class Notifications extends React.Component {
                 notifications: notifications,
                 newNotifications: true
             });
+            new Audio('https://proxy.notificationsounds.com/message-tones/juntos-607/download/file-sounds-1148-juntos.mp3').play();
         }
         this.notificationsSocket.onclose = (event) => {
             alert("Notifications connection lost.\nPlease refresh the page and login again." + event.data);
@@ -54,6 +56,7 @@ export default class Notifications extends React.Component {
 
     toggleNotifications() {
         this.setState({
+            readNotifications: (this.state.hideNotifications ? this.state.notifications.length : this.state.readNotifications),
             hideNotifications: !this.state.hideNotifications,
             newNotifications: false
         });
@@ -65,14 +68,17 @@ export default class Notifications extends React.Component {
                 <ThemeProvider theme={getTheme()}>
                     <Button onClick={() => this.toggleNotifications()}>
                         {this.state.newNotifications ?
-                            <NotificationsActiveIcon></NotificationsActiveIcon>
+                            <div>
+                                <NotificationsActiveIcon></NotificationsActiveIcon>
+                                <div className="notification-indicator">{this.state.notifications.length - this.state.readNotifications}</div>
+                            </div>
                             : <NotificationsIcon></NotificationsIcon>}
                     </Button>
                     <div className={"notification-panel " + (this.state.hideNotifications ? 'hide' : '')} >
                         <Paper elevation={6}>
                             <List component="nav" aria-label="main mailbox folders">
                                 {this.state.notifications.length === 0 ?
-                                    <ListItem button>
+                                    <ListItem key="0" button>
                                         <ListItemIcon>
                                             <FiberManualRecordIcon fontSize="inherit" />
                                         </ListItemIcon>
@@ -81,7 +87,7 @@ export default class Notifications extends React.Component {
                                     :
                                     this.state.notifications.map((notification) => {
                                         return (
-                                            <ListItem button>
+                                            <ListItem key={notification} button>
                                                 <ListItemIcon>
                                                     <FiberManualRecordIcon fontSize="inherit" />
                                                 </ListItemIcon>

@@ -17,6 +17,11 @@
     <servlet-name>Jersey Web Application</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
+  <listener>
+    <listener-class>
+        com.chanan.initialization.IdeaTradingDataProvider
+    </listener-class>
+  </listener>
   <filter>
   	<display-name>CorsFilter</display-name>
   	<filter-name>CorsFilter</filter-name>
